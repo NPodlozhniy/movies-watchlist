@@ -39,11 +39,11 @@ async def add_movie(payload: types.Message):
 @dp.message_handler(commands="watch")
 async def watch_movie(payload: types.Message):
     text = payload.get_args().strip()
-    df = get_movies()
-    indexes = (df.movie == text)
+    cur_movies = get_movies()
+    indexes = (cur_movies.movie == text)
     if sum(indexes) > 0:
-        df.loc[df.movie == text, "status"] = "watched"
-        df.to_csv(PATH_TO_TABLE, index=False)
+        cur_movies.loc[cur_movies.movie == text, "status"] = "watched"
+        cur_movies.to_csv(PATH_TO_TABLE, index=False)
         message = f"Фильм *{text}* просмотрен"
     else:
         message = f"Фильм *{text}* остутствует в списке"
