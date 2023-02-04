@@ -41,14 +41,26 @@ async def watch_movie(payload: types.Message):
     text = payload.get_args().strip()
     cur_movies = get_movies()
     indexes = (cur_movies.movie == text)
-    if sum(indexes) > 0:
-        cur_movies.loc[cur_movies.movie == text, "status"] = "watched"
+    if sum(indexes) == 0:
+        message = f"Сперва фильм *{text}* надо добавить в список"
+    else:
+        cur_movies.loc[indexes, "status"] = "watched"
         cur_movies.to_csv(PATH_TO_TABLE, index=False)
         message = f"Фильм *{text}* просмотрен"
-    else:
-        message = f"Фильм *{text}* остутствует в списке"
     await payload.reply(message, parse_mode="Markdown")
 
+
+@dp.message_handler(commands="del")
+async def del_movie(payload: types.Message):
+    text = payload.get_args().strip()
+    cur_movies = get_movies()
+    indexes = (cur_movies.movie == text)
+    if sum(indexes) == 0:
+        message = f"Фильм *{text}* и так остутствует в списке"
+    else:
+        cur_movies[-indexes].to_csv(PATH_TO_TABLE, index=False)
+        message = f"Фильм *{text}* удален"
+    await payload.reply(message, parse_mode="Markdown")
 
 if __name__ == "__main__":
     executor.start_polling(dp)
