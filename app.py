@@ -11,6 +11,10 @@ bot = Bot(token=APP_TOKEN)
 dp = Dispatcher(bot)
 
 
+def formatter(name: str) -> str:
+    return ' '.join([x[0].upper() + x[1:] for x in name.strip().split(' ')])
+
+
 def get_movies():
     return pd.read_csv(PATH_TO_TABLE)
 
@@ -22,7 +26,7 @@ async def all_movies(payload: types.Message):
 
 @dp.message_handler(commands="add")
 async def add_movie(payload: types.Message):
-    text = payload.get_args().strip()
+    text = formatter(payload.get_args())
     cur_movies = get_movies()
     if not text:
         message = f"Укажите название фильма"
@@ -38,7 +42,7 @@ async def add_movie(payload: types.Message):
 
 @dp.message_handler(commands="watch")
 async def watch_movie(payload: types.Message):
-    text = payload.get_args().strip()
+    text = formatter(payload.get_args())
     cur_movies = get_movies()
     indexes = (cur_movies.movie == text)
     if sum(indexes) == 0:
@@ -52,7 +56,7 @@ async def watch_movie(payload: types.Message):
 
 @dp.message_handler(commands="del")
 async def del_movie(payload: types.Message):
-    text = payload.get_args().strip()
+    text = formatter(payload.get_args())
     cur_movies = get_movies()
     indexes = (cur_movies.movie == text)
     if sum(indexes) == 0:
