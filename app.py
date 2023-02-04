@@ -12,7 +12,10 @@ dp = Dispatcher(bot)
 
 
 def formatter(name: str) -> str:
-    return ' '.join([x[0].upper() + x[1:] for x in name.strip().split(' ')])
+    return ' '.join([
+        x[0].upper() + x[1:].lower() if len(x) > 3 else x.lower()
+        for x in name.strip().split(' ')
+    ])
 
 
 def get_movies():
@@ -21,7 +24,9 @@ def get_movies():
 
 @dp.message_handler(commands=["start", "list"])
 async def all_movies(payload: types.Message):
-    await payload.reply(f"```{get_movies().to_markdown(tablefmt='presto')}```", parse_mode="Markdown")
+    df = get_movies()
+    df['№'] = df.index + 1
+    await payload.reply(f"```{df.set_index('№').to_markdown(tablefmt='grid')}```", parse_mode="Markdown")
 
 
 @dp.message_handler(commands="add")
