@@ -11,8 +11,7 @@ logging.basicConfig(
 )
 
 APP_TOKEN = os.environ.get("TOKEN")
-
-PATH_TO_TABLE = "app/movies/movies_list.csv"
+PATH_TO_TABLE = os.environ.get("PATH_TO_TABLE")
 
 bot = Bot(token=APP_TOKEN)
 dp = Dispatcher(bot)
