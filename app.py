@@ -1,7 +1,14 @@
 import os
-import pandas as pd
+import logging
 
+import pandas as pd
 from aiogram import Bot, Dispatcher, executor, types
+
+logging.basicConfig(
+    format="%(levelname)s : %(asctime)s - %(message)s",
+    datefmt="%d-%b-%y %H:%M:%S",
+    level=logging.INFO,
+)
 
 APP_TOKEN = os.environ.get("TOKEN")
 
@@ -34,7 +41,7 @@ async def add_movie(payload: types.Message):
     text = formatter(payload.get_args())
     cur_movies = get_movies()
     if not text:
-        message = f"Укажите название фильма"
+        message = f"Необходимо указать название фильма"
     elif text in cur_movies.movie.values:
         message = f"Фильм *{text}* уже есть в списке"
     else:
@@ -42,6 +49,7 @@ async def add_movie(payload: types.Message):
         updated_list = pd.concat([cur_movies, new_movie], ignore_index=True, axis=0)
         updated_list.to_csv(PATH_TO_TABLE, index=False)
         message = f"Фильм *{text}* добавлен"
+    logging.info(message)
     await payload.reply(message, parse_mode="Markdown")
 
 
@@ -56,6 +64,7 @@ async def watch_movie(payload: types.Message):
         cur_movies.loc[indexes, "status"] = "watched"
         cur_movies.to_csv(PATH_TO_TABLE, index=False)
         message = f"Фильм *{text}* просмотрен"
+    logging.info(message)
     await payload.reply(message, parse_mode="Markdown")
 
 
@@ -69,7 +78,9 @@ async def del_movie(payload: types.Message):
     else:
         cur_movies[-indexes].to_csv(PATH_TO_TABLE, index=False)
         message = f"Фильм *{text}* удален"
+    logging.info(message)
     await payload.reply(message, parse_mode="Markdown")
+
 
 if __name__ == "__main__":
     executor.start_polling(dp)
