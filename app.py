@@ -1,6 +1,7 @@
 import os
 import logging
 
+import psycopg2
 import pandas as pd
 from aiogram import Bot, Dispatcher, executor, types
 
@@ -11,10 +12,31 @@ logging.basicConfig(
 )
 
 APP_TOKEN = os.environ.get("TOKEN")
-PATH_TO_TABLE = os.environ.get("PATH_TO_TABLE")
 
 bot = Bot(token=APP_TOKEN)
 dp = Dispatcher(bot)
+
+
+def database_connection():
+    return psycopg2.connect(
+        host = os.environ.get("HOST", "localhost"),
+        user = "postgres",
+        password = "qwerty",
+        port = "5432",
+        database = "movies_db",
+    )
+
+
+def dml(statement: str):
+    try:
+        conn = database_connection()
+        cur = conn.cursor()
+        cur.execute(statement)
+        conn.commit()
+        cur.close()
+        conn.close()
+    except psycopg2.DatabaseError as error:
+        return f"{error}", 500
 
 
 def formatter(name: str) -> str:
@@ -25,7 +47,18 @@ def formatter(name: str) -> str:
 
 
 def get_movies():
-    return pd.read_csv(PATH_TO_TABLE)
+    try:
+        conn = database_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT movie, status FROM movies_table")
+        data = cur.fetchall()
+        cur.close()
+        conn.close()
+        cur.close()
+        conn.close()
+        return pd.DataFrame(data, columns=["movie", "status"])
+    except psycopg2.DatabaseError as error:
+        return f"{error}", 500
 
 
 @dp.message_handler(commands=["start", "list"])
@@ -44,9 +77,7 @@ async def add_movie(payload: types.Message):
     elif text in cur_movies.movie.values:
         message = f"Фильм *{text}* уже есть в списке"
     else:
-        new_movie = pd.DataFrame({"movie": [text], "status": ["unwatched"]})
-        updated_list = pd.concat([cur_movies, new_movie], ignore_index=True, axis=0)
-        updated_list.to_csv(PATH_TO_TABLE, index=False)
+        dml(f"INSERT INTO movies_table (movie, status) VALUES ('{text}', 'unwatched')")
         message = f"Фильм *{text}* добавлен"
     logging.info(message)
     await payload.reply(message, parse_mode="Markdown")
@@ -60,8 +91,7 @@ async def watch_movie(payload: types.Message):
     if sum(indexes) == 0:
         message = f"Сперва фильм *{text}* надо добавить в список"
     else:
-        cur_movies.loc[indexes, "status"] = "watched"
-        cur_movies.to_csv(PATH_TO_TABLE, index=False)
+        dml(f"UPDATE movies_table SET status = 'watched' WHERE movie = '{text}'")
         message = f"Фильм *{text}* просмотрен"
     logging.info(message)
     await payload.reply(message, parse_mode="Markdown")
@@ -75,7 +105,7 @@ async def del_movie(payload: types.Message):
     if sum(indexes) == 0:
         message = f"Фильм *{text}* и так остутствует в списке"
     else:
-        cur_movies[-indexes].to_csv(PATH_TO_TABLE, index=False)
+        dml(f"DELETE FROM movies_table WHERE movie = '{text}'")
         message = f"Фильм *{text}* удален"
     logging.info(message)
     await payload.reply(message, parse_mode="Markdown")

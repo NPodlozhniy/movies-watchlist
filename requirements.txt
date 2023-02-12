@@ -1,3 +1,4 @@
 aiogram>=2.15
 pandas>=1.2.4
 tabulate>=0.8.9
+psycopg2-binary>=2.9.3
