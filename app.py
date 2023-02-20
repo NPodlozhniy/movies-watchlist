@@ -20,10 +20,10 @@ dp = Dispatcher(bot)
 def database_connection():
     return psycopg2.connect(
         host = os.environ.get("HOST", "localhost"),
-        user = "postgres",
-        password = "qwerty",
+        user = os.environ.get("USER", "postgres"),
+        password = os.environ.get("PASSWORD"),
         port = "5432",
-        database = "movies_db",
+        database = "movies",
     )
 
 
