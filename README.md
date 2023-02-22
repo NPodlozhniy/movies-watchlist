@@ -46,3 +46,31 @@ Also you can easily access the logs using
 ``` bash
 docker logs -t tgbot
 ```
+
+### Addition
+
+You can manage database manually using pleasant web interface - [Apache Superset](https://hub.docker.com/r/apache/superset)
+
+#### Log In
+
+Thanks to container has been already run you don't need to write any code!
+Just navigate to `localhost:8080` and login using `admin` as username and password (screen #1)
+
+#### Connect Database
+
+Then you need to connect the database, navigate to the plus sign in the top right corner according this screen #2 and select PostgreSQL
+
+Insert your parameters: (screen #3)
+ - HOST you need execute `docker inspect app` and find the IP used by the container with `"Name": "database"` in the output
+ - PORT sholud be `5432`
+ - DATABASE NAME `movies`
+ - USERNAME `postgres` (default user)
+ - PASSWORD `qwerty` (is you haven't changed it during the setup)
+
+Adjust how the database will interact with SQL Lab at least mark the following checkboxes
+ - [x] Allow CREATE TABLE AS
+ - [x] Allow DML
+
+#### Write scripts
+
+Navigate to SQL Lab and write and run your queries or DML statements here (screen #4)
