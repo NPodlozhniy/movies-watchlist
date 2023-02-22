@@ -58,9 +58,9 @@ Just navigate to `localhost:8080` and login using `admin` as username and passwo
 
 #### Connect Database
 
-Then you need to connect the database, navigate to the plus sign in the top right corner according this [screen #2](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con2.JPG) and select PostgreSQL
+Then you need to connect the database, navigate to the plus sign in the top right corner according this [screen #2](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con3.JPG) and select PostgreSQL
 
-Insert your parameters: [screen #3](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con3.JPG)
+Insert your parameters: [screen #3](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con2.JPG)
  - HOST you need execute `docker inspect app` and find the IPv4 address used by the container with `"Name": "database"` in the output
  - PORT sholud be `5432`
  - DATABASE NAME `movies`
