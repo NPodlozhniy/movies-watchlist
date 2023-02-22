@@ -23,21 +23,24 @@ The only thing you should do is to set an environment variable - the token of yo
 export TOKEN=<YOUR TOKEN>  (use 'set' instead of 'export' for Windows)
 ```
 
-Then choose the way how you want your movies list will be mounted and run the appropriate command:
- - [bind mount](https://github.com/NPodlozhniy/movies-watchlist/blob/master/bind_mount_run.sh)
- - [volume](https://github.com/NPodlozhniy/movies-watchlist/blob/master/volume_run.sh)
+Then copy the content of [run.sh](https://github.com/NPodlozhniy/movies-watchlist/blob/master/run.sh) and run using command line
 
 _Important Notes:_
 
-a) For `Windows` you should replace Linux speciefic syntax: `$TOKEN` with `%TOKEN%` and `$pwd` with `%cd%` and
+a) For `Windows` you should replace Linux speciefic syntax: `$TOKEN` with `%TOKEN%` and `$pwd` with `%cd%` etc
 
 b) if it doesn't work transform the commands into the one row
 
 
 Since you have run one of the command and the necessary container are set further you can start and stop your app simply using
 ``` bash
+docker start database
 docker start tgbot
+docker start superset
+
+docker stop database
 docker stop tgbot
+docker stop superset
 ```
 Also you can easily access the logs using 
 ``` bash
