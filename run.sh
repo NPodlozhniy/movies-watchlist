@@ -9,7 +9,7 @@ echo Start Building...
 	&& cd ../backend 
 	&& docker build -t moviebot . 
 	&& docker rm tgbot
-	 & docker run -d --net app -e TOKEN=%TOKEN% -e HOST=database -e PASSWORD=qwerty --name tgbot moviebot 
+	 & docker run -d --net app -e TOKEN=$TOKEN -e HOST=database -e PASSWORD=qwerty --name tgbot moviebot 
 	&& echo Application is launched 
 	&& docker run --rm -d --net app -p 8080:8088 --name superset apache/superset 
 	&& docker exec -it superset superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@superset.com --password admin 

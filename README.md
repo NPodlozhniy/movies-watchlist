@@ -23,7 +23,7 @@ The only thing you should do is to set an environment variable - the token of yo
 export TOKEN=<YOUR TOKEN>  (use 'set' instead of 'export' for Windows)
 ```
 
-Then copy the content of [run.sh](https://github.com/NPodlozhniy/movies-watchlist/blob/master/run.sh) and run using command line
+Then copy the content of [run.sh](https://github.com/NPodlozhniy/movies-watchlist/blob/master/run.sh) and execute using command line interface
 
 _Important Notes:_
 
