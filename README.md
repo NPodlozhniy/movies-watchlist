@@ -54,14 +54,14 @@ You can manage database manually using pleasant web interface - [Apache Superset
 #### Log In
 
 Thanks to container has been already run you don't need to write any code!
-Just navigate to `localhost:8080` and login using `admin` as username and password (screen #1)
+Just navigate to `localhost:8080` and login using `admin` as username and password [screen #1](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con1.JPG)
 
 #### Connect Database
 
-Then you need to connect the database, navigate to the plus sign in the top right corner according this screen #2 and select PostgreSQL
+Then you need to connect the database, navigate to the plus sign in the top right corner according this [screen #2](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con2.JPG) and select PostgreSQL
 
-Insert your parameters: (screen #3)
- - HOST you need execute `docker inspect app` and find the IP used by the container with `"Name": "database"` in the output
+Insert your parameters: [screen #3](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con3.JPG)
+ - HOST you need execute `docker inspect app` and find the IPv4 address used by the container with `"Name": "database"` in the output
  - PORT sholud be `5432`
  - DATABASE NAME `movies`
  - USERNAME `postgres` (default user)
@@ -73,4 +73,4 @@ Adjust how the database will interact with SQL Lab at least mark the following c
 
 #### Write scripts
 
-Navigate to SQL Lab and write and run your queries or DML statements here (screen #4)
+Navigate to SQL Lab and write and run your queries or DML statements here [screen #4](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con4.JPG)
