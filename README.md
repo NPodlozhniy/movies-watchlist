@@ -23,28 +23,21 @@ The only thing you should do is to set an environment variable - the token of yo
 export TOKEN=<YOUR TOKEN>  (use 'set' instead of 'export' for Windows)
 ```
 
-Then copy the content of [run.sh](https://github.com/NPodlozhniy/movies-watchlist/blob/master/run.sh) and execute using command line interface
-
-_Important Notes:_
-
-a) For `Windows` you should replace Linux speciefic syntax: `$TOKEN` with `%TOKEN%` and `$pwd` with `%cd%` etc
-
-b) if it doesn't work transform the commands into the one row
-
-
-Since you have run one of the command and the necessary container are set further you can start and stop your app simply using
+Then you can build the app with just one command
 ``` bash
-docker start database
-docker start tgbot
-docker start superset
+docker-compose up -d
+```
 
-docker stop database
-docker stop tgbot
-docker stop superset
+_Important Note: If the command doesn't work, try to drop the dash and use just `docker compose ...`_
+
+Since you have run the command and all the necessary containers are set further you can start and stop your app simply using
+``` bash
+docker-compose stop
+docker-compose start
 ```
 Also you can easily access the logs using 
 ``` bash
-docker logs -t tgbot
+docker-compose logs backend
 ```
 
 ### Addition
