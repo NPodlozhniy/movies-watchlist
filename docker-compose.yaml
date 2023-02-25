@@ -1,0 +1,93 @@
+x-superset-volumes: &superset-volumes
+    - superset_home:/app/superset_home
+
+version: "3"
+
+services:
+
+    database:
+        build: ./database
+        image: database
+        environment:
+            POSTGRES_PASSWORD: qwerty
+            POSTGRES_USER: postgres
+            POSTGRES_DB: movies
+        volumes:
+            - movies:/var/lib/postgresql/data
+        networks:
+            - app
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+
+    backend:
+        build: ./backend
+        image: moviebot
+        environment:
+            TOKEN: ${TOKEN}
+            HOST: database
+            PASSWORD: qwerty
+        networks:
+            - app
+        depends_on:
+            database:
+                condition: service_healthy
+
+    superset:
+        image: apache/superset
+        ports:
+            - 8080:8088
+        networks:
+            - app
+        depends_on:
+            database:
+                condition: service_healthy
+            backend:
+                condition: service_started
+        healthcheck:
+            test: ["CMD", "curl", "--fail", "localhost:8088"]
+        volumes: *superset-volumes
+
+    superset-superuser:
+        image: apache/superset
+        command: bash -c "superset fab create-admin
+            --username admin
+            --firstname Superset
+            --lastname Admin
+            --email admin@superset.com
+            --password admin"
+        networks:
+            - app
+        depends_on:
+            superset:
+                condition: service_healthy
+        volumes: *superset-volumes
+
+    superset-migrations:
+        image: apache/superset
+        networks:
+            - app
+        command: superset db upgrade
+        depends_on:
+            superset-superuser:
+                condition: service_completed_successfully
+        volumes: *superset-volumes
+
+    superset-init:
+        image: apache/superset
+        networks:
+            - app
+        command: superset init
+        depends_on:
+            superset-migrations:
+                condition: service_completed_successfully
+        volumes: *superset-volumes
+
+volumes:
+    movies:
+        external: true
+    superset_home:
+        external: false
+
+networks:
+    app:
+        name: app
