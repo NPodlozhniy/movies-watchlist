@@ -17,14 +17,34 @@ bot = Bot(token=APP_TOKEN)
 dp = Dispatcher(bot)
 
 
+def db_url_parse(url):
+    args = {}
+    data = url.split(sep='//')[1]
+    args['user'] = data.split(':')[0]
+    args['password'], args['hostname'] = data.split(':')[1].split('@')
+    args['port'], args['database'] = data.split(':')[2].split('/')
+    return args
+
+
 def database_connection():
-    return psycopg2.connect(
-        host = os.environ.get("HOST", "localhost"),
-        user = os.environ.get("USER", "postgres"),
-        password = os.environ.get("PASSWORD"),
-        port = "5432",
-        database = "movies",
-    )
+    url = os.environ.get("DATABASE_URL")
+    if url:
+        args = db_url_parse(url)
+        return psycopg2.connect(
+            host = args['hostname'],
+            user = args['user'],
+            password = args['password'],
+            port = args['port'],
+            database = args['database']
+            )
+    else:
+        return psycopg2.connect(
+            host = os.environ.get("HOST", "localhost"),
+            user = os.environ.get("USER", "postgres"),
+            password = os.environ.get("PASSWORD"),
+            port = "5432",
+            database = "movies",
+        )
 
 
 def dml(statement: str):
@@ -41,7 +61,7 @@ def dml(statement: str):
 
 def formatter(name: str) -> str:
     return ' '.join([
-        x[0].upper() + x[1:].lower() if len(x) > 3 else x.lower()
+        x[0].upper() + x[1:].lower() if len(x) > 3 else x
         for x in name.strip().split(' ')
     ])
 
@@ -57,6 +77,9 @@ def get_movies():
         cur.close()
         conn.close()
         return pd.DataFrame(data, columns=["movie", "status"])
+    except psycopg2.errors.UndefinedTable:
+        dml(f"CREATE TABLE IF NOT EXISTS movies_table(movie TEXT PRIMARY KEY, status TEXT NOT NULL)")
+        return get_movies()
     except psycopg2.DatabaseError as error:
         return f"{error}", 500
 
