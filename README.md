@@ -40,16 +40,16 @@ Also you can easily access the logs using
 docker-compose logs backend
 ```
 
-### Addition
+## DBMS Web App
 
 You can manage database manually using pleasant web interface - [Apache Superset](https://hub.docker.com/r/apache/superset)
 
-#### Log In
+### Log In
 
 Thanks to container has been already run you don't need to write any code!
 Just navigate to `localhost:8080` and login using `admin` as username and password [screen #1](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con1.JPG)
 
-#### Connect Database
+### Connect Database
 
 Then you need to connect the database, navigate to the plus sign in the top right corner according this [screen #2](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con3.JPG) and select PostgreSQL
 
@@ -64,6 +64,35 @@ Adjust how the database will interact with SQL Lab at least mark the following c
  - [x] Allow CREATE TABLE AS
  - [x] Allow DML
 
-#### Write scripts
+### Write scripts
 
 Navigate to SQL Lab and write and run your queries or DML statements here [screen #4](https://github.com/NPodlozhniy/movies-watchlist/blob/master/screenshots/con4.JPG)
+
+## Deploy to Heroku
+
+As soon as Heroku as a platform doesn't have the right capabilities to use docker-compose (sometimes you can use [heroku.yml](https://devcenter.heroku.com/articles/build-docker-images-heroku-yml) but it's pretty poor in terms of functionality compared to docker-compose) the easiest way to deploy an app is [container registry](https://devcenter.heroku.com/articles/container-registry-and-runtime)
+
+So, we will deploy only the backend and database (without the Superset web interface) by simply using the CLI to execute the following commands:
+
+Fisrt of all you have to create Heroku account if it already exists just log in to it
+``` bash
+heroku login
+```
+Then create a new app
+``` bash
+heroku create <YOUR APP>
+```
+Connect [Postgresql](https://devcenter.heroku.com/articles/heroku-postgresql) database add-on
+``` bash
+heroku addons:create heroku-postgresql:mini -a <YOUR APP>
+```
+Heroku offers its own docker image hub, you need to login
+``` bash
+heroku container:login
+```
+Then navigate to the folder contains the app, build the image and run it
+``` bash
+cd backend
+heroku container:push worker
+heroku container:release worker
+```
