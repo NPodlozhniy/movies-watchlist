@@ -123,5 +123,5 @@ heroku addons:destroy HEROKU_POSTGRESQL_<CORRESPONDING COLOR> --app <THIS APP>
 ```
 Check that for now you have only one Postgres Add-On 
 ```
-heroku pg:info -a movies-watchlist-tgbot
+heroku pg:info -a <THIS APP>
 ```
