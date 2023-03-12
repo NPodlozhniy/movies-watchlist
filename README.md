@@ -96,3 +96,32 @@ cd backend
 heroku container:push worker
 heroku container:release worker
 ```
+### Helpful advice
+
+Given that Heroku became a paid service recently you probably will not be happy to pay for extra database addons
+
+So, there is a way to [share](https://devcenter.heroku.com/articles/heroku-postgresql#sharing-heroku-postgres-between-applications) one database among different Heroku apps. If you already have a database addon used in another app it can be advantageously for you:
+
+
+Add existed database to created app
+```
+heroku addons:attach <YOUR OLD APP>::DATABASE --app <THIS APP>
+```
+The attached database’s URL is assigned to a config var with the name format `HEROKU_POSTGRESQL_<COLOR>_URL`
+
+You can check the name via web interface or within a command
+```
+heroku addons -a <THIS APP>
+```
+Change the default database to [update](https://devcenter.heroku.com/articles/managing-heroku-postgres-using-cli#pg-promote) the value of the `DATABASE_URL` environment variable which is used inside the app
+```
+heroku pg:promote HEROKU_POSTGRESQL_<YOUR COLOR> --app <THIS APP>
+```
+Finally, don't forget to destroy the paid database we set up during deployment (The attachment with COLOR name appears for new database after `promote` command)
+```
+heroku addons:destroy HEROKU_POSTGRESQL_<CORRESPONDING COLOR> --app <THIS APP>
+```
+Check that for now you have only one Postgres Add-On 
+```
+heroku pg:info -a movies-watchlist-tgbot
+```
